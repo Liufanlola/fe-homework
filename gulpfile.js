@@ -31,4 +31,15 @@ gulp.task('watch', function() {
   gulp.watch('src/**/*.js', ['js']);
 });
 
+
+function errorHandler() {
+  return $.plumber({
+    errorHandler(err) {
+      $.notify.onError('Error: <%= error.message %>')(err);
+      this.emit('end');
+    }
+  });
+}
+
+
 gulp.task('default', ['webserver', 'watch', 'less']);
