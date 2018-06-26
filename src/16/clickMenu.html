@@ -60,6 +60,11 @@
         const nav=menu.querySelector('.nav');
         const icon=menu.querySelector('i');
 
+        // 嗯，改完之后是不是代码很简洁了？
+        // 以后做效果时，要多用状态这种思路来解决问题
+        // 只要把几个状态想好，js控制少量的状态就可以了。
+        // 1. 要操作dom这种场景下，要多用状态这种思路解决问题
+        // 2. 如果使用vue或react时，要以数据为中心的思路来解决问题
         bar.addEventListener('click',(event)=>{
             menu.classList.toggle('active');
         });

@@ -30,6 +30,19 @@ function closest(elm,selector){
     }
     else{
         let selectorElm=elm;
+        // 1. 这里的判断可能有点小问题，parentNode会不会一直找不到，直到null?
+        // 2. 能否把if上半部分的判断，和这个while给结合起来，让代码更加精简？
+        // 关于格式化：
+        // 1. if 的格式一般会写成
+        /*
+        if (...) {
+          ...
+        } else {
+          
+        }
+        */
+       // 2. 养成在=号等操作符左右加空格的习惯， 那样代码可读性会增加。
+       // 注意我代码中空格，空行的使用，可以google简单找找代码风格，然后遵循以养成习惯
         while(!selectorElm.matches(selector)){
             selectorElm=selectorElm.parentNode;
         }
@@ -52,8 +65,11 @@ app(tBody,'focusout','.input-cell',function(){
     // 而是会使用 $(this).closest('.cell') 来直接找到指定选择器的父节点
     // 尝试实现closest函数，函数签名为: closest(elm, selector) -> {Element}
     const ancestor=closest(this,'.cell');
+    // 这里的空判断的正则有误，要加上^和$，而且还要考虑多个字符的情况
+    // 字符串为空，也可以直接 trim() 掉，在if中判断
     if(!(/\s/.test(this.value))){
         //判断是否是数字
+        // 这个正则式好像能匹配  12. 这样的形式哦， 需要优化下。
         if((/^\d+\.?\d*$/).test(this.value)){
             ancestor.classList.add('num');
         }
@@ -86,7 +102,8 @@ app(tBody,'focusout','.input-cell',function(){
 });
 
 function getSum(trArr){
-
+    // 尽量不要使用RegExp.$1等静态变量，比较容易出bug，不好排查
+    // 咱们可以在上面匹配后，将match传进来。
     const list1=RegExp.$1.split('');
     const list2=RegExp.$2.split('');
     const firstcol=(list1[0].charCodeAt(0))%65+1;
@@ -120,6 +137,7 @@ addtr.addEventListener('click',function(){
     const tdLists=trLists[0].querySelectorAll('td');//6
     const len=trLists.length;
 
+    // 这里可以用let，保持一致性，用es6时就只用const或let，而不用var
     for(var i=0;i<tdLists.length;i++){
         const tdNode=document.createElement('td');
         if(i===0){
@@ -154,3 +172,32 @@ addth.addEventListener('click',function(){
     }
 });
 
+
+// 尝试实现以下几个函数
+
+(function() {
+
+    // 使用上Array#reduce
+    function sum(list) {
+      // TODO
+    }
+
+    sum([1, 2, 3, 4]);
+
+    
+    // 求一个对象列表中, age的和。 注：只对 >0 的age项求和
+    // 要求用上 Array#filter, Array.map
+    // 用上上面写的sum函数
+    function sumAge(list) {
+      
+    }
+
+    sumAge([
+        { name: 'a', age: 10 },
+        { name: 'b', age: -1 },
+        { name: 'c' },
+        { name: 'd', e: 19 },
+        { name: 'e', age: 2 },
+        { name: 'f', age: 7 }
+    ]);
+})();

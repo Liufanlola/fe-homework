@@ -26,6 +26,8 @@
             let urlInfo=null;
             
             urlInfo=parseUrl(link);
+            // 以下代码存在着重复，可以尝试将它重构下，把它变得简洁？
+            // 以后要对重复的代码非常敏感，这样代码就会写得越来越好。
             lists[0].querySelector('strong').innerHTML=link;
             lists[1].querySelector('strong').innerHTML=urlInfo.protocal;
             lists[2].querySelector('strong').innerHTML=urlInfo.hostName;
@@ -54,10 +56,16 @@
         }
 
         function parseQuery(query){
+            // 使用ES6时需要注意，能用const就用const，需要修改变量值时用let。
+            // 这样就能够得到const带来的好处，避免了无意间把变量修改了造成的问题。
             let queryObj={};
             if(query){
                 const queryArr=query.split(/&/);
                 queryArr.forEach(item=>{
+                    // 这个parseQuery基本能正常工作
+                    // 可以尝试考虑一些异常情况，比如
+                    // a=1&hello
+                    // a=2=2&hi=123
                     let singleQuery=item.split(/=/);
                     let key=singleQuery[0];
                     let value=decodeURIComponent(singleQuery[1]);
