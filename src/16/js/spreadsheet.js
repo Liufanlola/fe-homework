@@ -25,11 +25,11 @@ function app(parentNode,eventType,node,fn){
 }
 
 function closest(elm,selector){
-    if(elm.matches(selector)){
-        return elm;
-    }
-    else{
-        let selectorElm=elm;
+    // if(elm.matches(selector)){
+    //     return elm;
+    // }
+    // else{
+    //     let selectorElm=elm;
         // 1. 这里的判断可能有点小问题，parentNode会不会一直找不到，直到null?
         // 2. 能否把if上半部分的判断，和这个while给结合起来，让代码更加精简？
         // 关于格式化：
@@ -43,17 +43,24 @@ function closest(elm,selector){
         */
        // 2. 养成在=号等操作符左右加空格的习惯， 那样代码可读性会增加。
        // 注意我代码中空格，空行的使用，可以google简单找找代码风格，然后遵循以养成习惯
-        while(!selectorElm.matches(selector)){
-            selectorElm=selectorElm.parentNode;
-        }
-        return selectorElm;
+    //     while(!selectorElm.matches(selector)){
+    //         selectorElm=selectorElm.parentNode;
+    //     }
+    //     return selectorElm;
         
+    // }
+
+    while(!elm.matches(selector)){
+        elm=elm.parentNode;
+        if(elm.matches(selector)){
+            return elm;
+        }
     }
 }
 
 app(tBody,'click','.cell',function(){
     this.classList.add('focus');
-    this.innerHTML='<div class="ui fluid icon input"><input type="text" class="input-cell"></div>';
+    this.innerHTML='<div class="ui fluid icon input"><input type="text" class="input-cell" value='+this.innerText+'></div>';
     const inputCell=table.querySelector('.input-cell');
     inputCell.focus();
 });
@@ -64,13 +71,13 @@ app(tBody,'focusout','.input-cell',function(){
     // 使用在jquery中，一般不会使用parentNode.parentNode这种和节点层次相关的方法，因为容易出bug
     // 而是会使用 $(this).closest('.cell') 来直接找到指定选择器的父节点
     // 尝试实现closest函数，函数签名为: closest(elm, selector) -> {Element}
+    // const ancestor=this.parentNode.parentNode;
     const ancestor=closest(this,'.cell');
     // 这里的空判断的正则有误，要加上^和$，而且还要考虑多个字符的情况
-    // 字符串为空，也可以直接 trim() 掉，在if中判断
-    if(!(/\s/.test(this.value))){
+    if((/^\S*$/g.test(this.value))){
         //判断是否是数字
         // 这个正则式好像能匹配  12. 这样的形式哦， 需要优化下。
-        if((/^\d+\.?\d*$/).test(this.value)){
+        if((/^\d+(\.\d+)?$/).test(this.value)){
             ancestor.classList.add('num');
         }
         ancestor.innerHTML=this.value;
@@ -88,7 +95,7 @@ app(tBody,'focusout','.input-cell',function(){
     const regMean=/^=mean\(([A-z]\d):([A-z]\d)\)$/;
 
     if(regSum.test(this.value)){
-        const numData=getSum(trLists);
+        const numData=getSum(trLists,regSum,this.value);
         ancestor.innerHTML=numData.sum;
         ancestor.classList.add('num');
 
@@ -101,11 +108,13 @@ app(tBody,'focusout','.input-cell',function(){
     }
 });
 
-function getSum(trArr){
+function getSum(trArr,regExp,value){
     // 尽量不要使用RegExp.$1等静态变量，比较容易出bug，不好排查
     // 咱们可以在上面匹配后，将match传进来。
-    const list1=RegExp.$1.split('');
-    const list2=RegExp.$2.split('');
+    const found=value.match(regExp);
+
+    const list1=found[1].split('');
+    const list2=found[2].split('');
     const firstcol=(list1[0].charCodeAt(0))%65+1;
     const lastcol=(list2[0].charCodeAt(0))%65+2;
     const firstrow=parseInt(list1[1])-1;
@@ -114,8 +123,8 @@ function getSum(trArr){
     let sum=0;
 
     //2层循环表格
-    for(var i=firstrow;i<lastrow;i++){
-        for(var j=firstcol;j<lastcol;j++){
+    for(let i=firstrow;i<lastrow;i++){
+        for(let j=firstcol;j<lastcol;j++){
             let tdLists=trArr[i].querySelectorAll('td'); 
             if(parseFloat(tdLists[j].innerHTML)){
                 sum+=parseFloat(tdLists[j].innerHTML);
@@ -138,7 +147,7 @@ addtr.addEventListener('click',function(){
     const len=trLists.length;
 
     // 这里可以用let，保持一致性，用es6时就只用const或let，而不用var
-    for(var i=0;i<tdLists.length;i++){
+    for(let i=0;i<tdLists.length;i++){
         const tdNode=document.createElement('td');
         if(i===0){
             tdNode.innerHTML=len+1;
@@ -165,7 +174,7 @@ addth.addEventListener('click',function(){
     thNode.innerHTML=String.fromCharCode(65+len-1);
     tHeadTr.appendChild(thNode);
 
-    for(var i=0;i<trLists.length;i++){
+    for(let i=0;i<trLists.length;i++){
         const tdNode=document.createElement('td');
         tdNode.classList.add('cell');
         trLists[i].appendChild(tdNode);
@@ -179,7 +188,9 @@ addth.addEventListener('click',function(){
 
     // 使用上Array#reduce
     function sum(list) {
-      // TODO
+        return list.reduce(( accumulator,currentValue ) => {
+            return accumulator + currentValue;
+        });
     }
 
     sum([1, 2, 3, 4]);
@@ -189,7 +200,13 @@ addth.addEventListener('click',function(){
     // 要求用上 Array#filter, Array.map
     // 用上上面写的sum函数
     function sumAge(list) {
-      
+        let newSumAge = [];
+        newSumAge = list.filter(item => {
+            return item.age && typeof( item.age ) === 'number' && item.age > 0;
+        }).map(item => {
+            return item.age;
+        });
+        return sum(newSumAge);
     }
 
     sumAge([
