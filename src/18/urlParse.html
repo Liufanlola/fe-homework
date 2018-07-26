@@ -12,35 +12,38 @@
     </style>
 </head>
 <body>
-    <div class="list"><span>URL:</span><strong></strong></div>
-    <div class="list"><span>protocal:</span><strong></strong></div>
-    <div class="list"><span>hostName:</span><strong></strong></div>
-    <div class="list"><span>port:</span><strong></strong></div>
-    <div class="list"><span>path:</span><strong></strong></div>
-    <div class="list"><span>search:</span><strong></strong></div>
-    <div class="list"><span>hash:</span><strong></strong></div>
+    <div class="list">
+        <div><span>URL:</span><strong></strong></div>
+        <div><span>protocal:</span><strong></strong></div>
+        <div><span>hostName:</span><strong></strong></div>
+        <div><span>port:</span><strong></strong></div>
+        <div><span>path:</span><strong></strong></div>
+        <div><span>search:</span><strong></strong></div>
+        <div><span>hash:</span><strong></strong></div>
+    </div>
     <script>
-        window.onload=function(){
-            const link=window.location.href;
-            const lists=document.querySelectorAll('.list');
-            let urlInfo=null;
+        // window.onload=function(){
+        //     const link=window.location.href;
+        //     const lists=document.querySelector('.list');
+        //     const group=lists.querySelectorAll('strong');
+        //     let urlInfo=null;
+        //     const urlLists=[];
             
-            urlInfo=parseUrl(link);
-            // 以下代码存在着重复，可以尝试将它重构下，把它变得简洁？
-            // 以后要对重复的代码非常敏感，这样代码就会写得越来越好。
-            lists[0].querySelector('strong').innerHTML=link;
-            lists[1].querySelector('strong').innerHTML=urlInfo.protocal;
-            lists[2].querySelector('strong').innerHTML=urlInfo.hostName;
-            lists[3].querySelector('strong').innerHTML=urlInfo.port;
-            lists[4].querySelector('strong').innerHTML=urlInfo.path;
-            lists[5].querySelector('strong').innerHTML=urlInfo.search;
-            lists[6].querySelector('strong').innerHTML=urlInfo.hash;
+        //     urlInfo=parseUrl(link);
+        //     for(let key in urlInfo){
+        //         urlLists.push(urlInfo[key]);
+        //     }
 
-            console.log(parseQuery(urlInfo.search));
-        }
-        // let urlInfo=null;
-        // const url='https://www.amazon.cn:3000/dp/B074JS9Q8P/ref=sr_1_1?ie=UTF8&qid=1529911929&sr=8-1&keywords=%E7%BC%96%E7%A8%8B%E7%9C%9F%E5%A5%BD%E7%8E%A9';
+        //     // 以下代码存在着重复，可以尝试将它重构下，把它变得简洁？
+        //     // 以后要对重复的代码非常敏感，这样代码就会写得越来越好。
+        //     for(let i=0;i<group.length;i++){
+        //         group[i].innerHTML=urlLists[i];
+        //     }
 
+        // }
+        let urlInfo=null;
+        const url='https://www.amazon.cn:3000/dp/B074JS9Q8P/ref=sr_1_1?test&ie=UTF8=UTF8&qid=1529911929&sr=8-1&keywords=%E7%BC%96%E7%A8%8B%E7%9C%9F%E5%A5%BD%E7%8E%A9';
+        urlInfo=parseUrl(url);
         function parseUrl(url){
             const regp=/^(https?:)\/\/([^:]+)(?::(\d+))?(\/[^?]+)?(?:\?([^#]*))?(#.*)?$/;
             // const regp=/^(https?:)\/\/([^:/]+)(:\d+)?(\/[^?]+)?(\?[^#]*)?(#.*)?$/;
@@ -54,11 +57,11 @@
                 hash:urlList[6]
             }
         }
-
+        console.log(parseQuery(urlInfo.search));
         function parseQuery(query){
             // 使用ES6时需要注意，能用const就用const，需要修改变量值时用let。
             // 这样就能够得到const带来的好处，避免了无意间把变量修改了造成的问题。
-            let queryObj={};
+            const queryObj={};
             if(query){
                 const queryArr=query.split(/&/);
                 queryArr.forEach(item=>{
